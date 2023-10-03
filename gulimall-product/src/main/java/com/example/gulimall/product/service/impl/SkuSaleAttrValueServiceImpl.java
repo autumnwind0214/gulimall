@@ -1,7 +1,7 @@
 package com.example.gulimall.product.service.impl;
 
-import com.example.gulimall.common.utils.PageUtils;
-import com.example.gulimall.common.utils.Query;
+import com.example.common.utils.PageUtils;
+import com.example.common.utils.Query;
 import com.example.gulimall.product.dao.SkuSaleAttrValueDao;
 import com.example.gulimall.product.entity.SkuSaleAttrValueEntity;
 import com.example.gulimall.product.service.SkuSaleAttrValueService;

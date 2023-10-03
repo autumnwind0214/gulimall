@@ -1,7 +1,7 @@
 package com.example.gulimall.product.service.impl;
 
-import com.example.gulimall.common.utils.PageUtils;
-import com.example.gulimall.common.utils.Query;
+import com.example.common.utils.PageUtils;
+import com.example.common.utils.Query;
 import com.example.gulimall.product.dao.SpuImagesDao;
 import com.example.gulimall.product.entity.SpuImagesEntity;
 import com.example.gulimall.product.service.SpuImagesService;

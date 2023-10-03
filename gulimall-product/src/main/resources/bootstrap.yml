@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        namespace: gulimall
+        server-addr: 192.168.243.11:8848
+        file-extension: yml
+        ext-config:
+          - data-id: product-datasource.yml
+            group: gulimall-product
+            refresh: true
+          - data-id: product-basic.yml
+            group: gulimall-product
+            refresh: true
+          - data-id: common.yml
+            group: common
+            refresh: true

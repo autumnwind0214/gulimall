@@ -2,8 +2,8 @@ package com.example.gulimall.coupon.service.impl;
 
 import com.example.gulimall.coupon.dao.SpuBoundsDao;
 import com.example.gulimall.coupon.service.SpuBoundsService;
-import com.example.gulimall.common.utils.PageUtils;
-import com.example.gulimall.common.utils.Query;
+import com.example.common.utils.PageUtils;
+import com.example.common.utils.Query;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;

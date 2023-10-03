@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        namespace: gulimall
+        server-addr: 192.168.243.11:8848
+        file-extension: yml
+        ext-config:
+          - data-id: coupon-datasource.yml
+            group: gulimall-coupon
+            refresh: true
+          - data-id: coupon-basic.yml
+            group: gulimall-coupon
+            refresh: true
+          - data-id: common.yml
+            group: common
+            refresh: true

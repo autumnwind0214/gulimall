@@ -3,6 +3,8 @@ package com.example.gulimall.coupon.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.example.common.utils.PageUtils;
+import com.example.common.utils.R;
 import com.example.gulimall.coupon.entity.HomeAdvEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.gulimall.coupon.service.HomeAdvService;
-import com.example.gulimall.common.utils.PageUtils;
-import com.example.gulimall.common.utils.R;
 
 
 
