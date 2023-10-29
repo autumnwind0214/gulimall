@@ -1,6 +1,11 @@
 spring:
+  application:
+    name: gulimall-gateway
   cloud:
     nacos:
+      discovery:
+        namespace: gulimall
+        server-addr: 192.168.243.11:8848
       config:
         namespace: gulimall
         server-addr: 192.168.243.11:8848
@@ -9,9 +14,3 @@ spring:
           - data-id: gateway.yml
             group: gulimall-gateway
             refresh: true
-#          - data-id: coupon-basic.yml
-#            group: gulimall-coupon
-#            refresh: true
-#          - data-id: common.yml
-#            group: common
-#            refresh: true
