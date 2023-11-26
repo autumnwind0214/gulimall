@@ -64,18 +64,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      * @return List<CategoryEntity>
      **/
     private List<CategoryEntity> getChildrens(CategoryEntity root, List<CategoryEntity> all) {
-        /*List<CategoryEntity> children = all.stream().filter(categoryEntity -> {
-            // return categoryEntity.getParentCid() == root.getCatId();
-            return categoryEntity.getParentCid().equals(root.getCatId());
-        }).map(categoryEntity -> {
-            // 找到子菜单
-            categoryEntity.setChildren(getChildrens(categoryEntity, all));
-            return categoryEntity;
-        }).sorted((menu1, menu2) -> {
-            // 子菜单的排序
-            return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
-        }).collect(Collectors.toList());
-        return children;*/
 
         List<CategoryEntity> children = all.stream().filter(categoryEntity -> {
             return categoryEntity.getParentCid() == root.getCatId();
