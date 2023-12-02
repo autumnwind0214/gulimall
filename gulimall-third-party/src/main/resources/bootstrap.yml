@@ -12,9 +12,3 @@ spring:
           - data-id: third-party-basic.yml
             group: gulimall-third-party
             refresh: true
-#    alicloud:
-#      access-key: LTAI5tNuHfCnzR3mzh6neGQT
-#      secret-key: axCQUXIkXVy71bgkmx4w6IlSTB6thR
-#      oss:
-#        endpoint: oss-cn-beijing.aliyuncs.com
-#        bucket: gulimall-autuon
