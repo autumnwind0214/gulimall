@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: renren-fast
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.243.11:8848
+        namespace: gulimall
+        file-extension: yml
+        ext-config:
+          - data-id: common.yml
+            group: common
+            refresh: true
