@@ -32,19 +32,34 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     @Override
     public PageUtils queryPage(Map<String, Object> params, Long catelogId) {
         QueryWrapper<AttrGroupEntity> wrapper = new QueryWrapper<>();
-        if (catelogId != 0) {
-            String key = (String) params.get("key");
-            wrapper.eq("catelog_id", catelogId);
-            if (!StringUtils.isEmpty(key)) {
-                wrapper.and((item) -> {
-                    item.eq("attr_group_id", key).or().like("attr_group_name", key);
-                });
-            }
+        String key = (String) params.get("key");
+        if (!StringUtils.isEmpty(key)) {
+            wrapper.and(obj -> {
+                obj.eq("attr_group_id", key).or().like("attr_group_name", key);
+            });
         }
 
-        IPage<AttrGroupEntity> page = this.page(new Query<AttrGroupEntity>().getPage(params),
-                wrapper);
+        if (catelogId == 0) {
+            IPage<AttrGroupEntity> page = this.page(new Query<AttrGroupEntity>().getPage(params), wrapper);
+            return new PageUtils(page);
+        } else {
+            wrapper.eq("catelog_id", catelogId);
+            return new PageUtils(this.page(new Query<AttrGroupEntity>().getPage(params), wrapper));
+        }
 
-        return new PageUtils(page);
+
+        // if (catelogId != 0) {
+        //     String key = (String) params.get("key");
+        //     wrapper.eq("catelog_id", catelogId);
+        //     if (!StringUtils.isEmpty(key)) {
+        //         wrapper.and((item) -> {
+        //             item.eq("attr_group_id", key).or().like("attr_group_name", key);
+        //         });
+        //     }
+        // }
+        //
+        // IPage<AttrGroupEntity> page = this.page(new Query<AttrGroupEntity>().getPage(params),
+        //         wrapper);
+
     }
 }
