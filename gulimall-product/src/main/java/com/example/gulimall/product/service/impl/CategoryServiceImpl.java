@@ -7,9 +7,11 @@ import com.example.common.utils.PageUtils;
 import com.example.common.utils.Query;
 import com.example.gulimall.product.dao.CategoryDao;
 import com.example.gulimall.product.entity.CategoryEntity;
+import com.example.gulimall.product.service.CategoryBrandRelationService;
 import com.example.gulimall.product.service.CategoryService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +21,9 @@ import java.util.stream.Collectors;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    @Resource
+    CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -59,6 +64,18 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         List<Long> parentPath = findParentPath(catelogId, paths);
         Collections.reverse(parentPath);
         return parentPath.toArray(new Long[parentPath.size()]);
+    }
+
+    /**
+     * 级联更新所有关联的数据
+     *
+     * @param category
+     * @return void
+     **/
+    @Override
+    public void updateCascade(CategoryEntity category) {
+        this.updateById(category);
+        categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
     }
 
     private List<Long> findParentPath(Long catelogId, List<Long> paths) {

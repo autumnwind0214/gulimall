@@ -23,6 +23,7 @@ import com.example.gulimall.product.service.BrandService;
 import com.example.common.utils.PageUtils;
 import com.example.common.utils.R;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 
@@ -36,14 +37,13 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("product/brand")
 public class BrandController {
-    @Autowired
+    @Resource
     private BrandService brandService;
 
     /**
      * 列表
      */
     @RequestMapping("/list")
-    //@RequiresPermissions("product:brand:list")
     public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = brandService.queryPage(params);
 
@@ -55,7 +55,6 @@ public class BrandController {
      * 信息
      */
     @RequestMapping("/info/{brandId}")
-    //@RequiresPermissions("product:brand:info")
     public R info(@PathVariable("brandId") Long brandId) {
         BrandEntity brand = brandService.getById(brandId);
 
@@ -66,7 +65,6 @@ public class BrandController {
      * 保存
      */
     @RequestMapping("/save")
-    //@RequiresPermissions("product:brand:save")
     public R save(@Validated({AddGroup.class}) @RequestBody BrandEntity brand) {
         brandService.save(brand);
         return R.ok();
@@ -76,9 +74,8 @@ public class BrandController {
      * 修改
      */
     @RequestMapping("/update")
-    //@RequiresPermissions("product:brand:update")
     public R update(@Validated({UpdateGroup.class}) @RequestBody BrandEntity brand) {
-        brandService.updateById(brand);
+        brandService.updateDetail(brand);
 
         return R.ok();
     }
@@ -97,7 +94,6 @@ public class BrandController {
      * 删除
      */
     @RequestMapping("/delete")
-    //@RequiresPermissions("product:brand:delete")
     public R delete(@RequestBody Long[] brandIds) {
         brandService.removeByIds(Arrays.asList(brandIds));
 
