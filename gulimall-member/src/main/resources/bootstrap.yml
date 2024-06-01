@@ -6,9 +6,6 @@ spring:
         server-addr: 192.168.243.11:8848
         file-extension: yml
         ext-config:
-          - data-id: member-datasource.yml
-            group: gulimall-member
-            refresh: true
           - data-id: member-basic.yml
             group: gulimall-member
             refresh: true

@@ -3,12 +3,9 @@ spring:
     nacos:
       config:
         namespace: gulimall
-        server-addr: 192.168.243.11:8848
+        server-addr: 127.0.0.1:8848
         file-extension: yml
         ext-config:
-          - data-id: ware-datasource.yml
-            group: gulimall-ware
-            refresh: true
           - data-id: ware-basic.yml
             group: gulimall-ware
             refresh: true
