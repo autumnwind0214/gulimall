@@ -11,3 +11,5 @@ spring:
           - data-id: common.yml
             group: common
             refresh: true
+server:
+  port: 7008
