@@ -1,20 +1,19 @@
 package com.example.gulimall.product.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
+import com.example.common.utils.PageUtils;
+import com.example.common.utils.R;
 import com.example.gulimall.product.entity.AttrEntity;
+import com.example.gulimall.product.entity.AttrGroupEntity;
+import com.example.gulimall.product.service.AttrGroupService;
 import com.example.gulimall.product.service.AttrService;
 import com.example.gulimall.product.service.CategoryService;
 import com.example.gulimall.product.vo.AttrGroupRelationVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.gulimall.product.entity.AttrGroupEntity;
-import com.example.gulimall.product.service.AttrGroupService;
-import com.example.common.utils.PageUtils;
-import com.example.common.utils.R;
+import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -27,20 +26,27 @@ import com.example.common.utils.R;
 @RestController
 @RequestMapping("product/attrgroup")
 public class AttrGroupController {
-    @Autowired
+    @Resource
     private AttrGroupService attrGroupService;
 
-    @Autowired
+    @Resource
     private CategoryService categoryService;
 
-    @Autowired
+    @Resource
     private AttrService attrService;
 
 
     @GetMapping("/{attrgroupId}/attr/relation")
-    public R arrtRelation(@PathVariable("attrgroupId") Long attrgroupId) {
+    public R attrRelation(@PathVariable("attrgroupId") Long attrgroupId) {
         List<AttrEntity> entities = attrService.getRelationAttr(attrgroupId);
         return R.ok().put("data", entities);
+    }
+    @GetMapping("/{attrgroupId}/noattr/relation")
+    public R attrNoRelation(@PathVariable("attrgroupId") Long attrgroupId,
+    @RequestParam Map<String, Object> params) {
+        PageUtils page = attrService.getNoRelationAttr(attrgroupId, params);
+
+        return R.ok().put("page", page);
     }
 
     @PostMapping("/attr/relation/delete")

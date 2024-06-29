@@ -1,10 +1,13 @@
 package com.example.gulimall.product.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.constant.ProductConstant;
 import com.example.common.utils.PageUtils;
+import com.example.common.utils.Query;
 import com.example.gulimall.product.dao.AttrDao;
 import com.example.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.example.gulimall.product.entity.AttrEntity;
@@ -12,25 +15,22 @@ import com.example.gulimall.product.entity.AttrGroupEntity;
 import com.example.gulimall.product.entity.CategoryEntity;
 import com.example.gulimall.product.service.AttrAttrgroupRelationService;
 import com.example.gulimall.product.service.AttrGroupService;
+import com.example.gulimall.product.service.AttrService;
 import com.example.gulimall.product.service.CategoryService;
 import com.example.gulimall.product.vo.AttrGroupRelationVo;
 import com.example.gulimall.product.vo.AttrResponseVo;
 import com.example.gulimall.product.vo.AttrVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.common.utils.Query;
-
-import com.example.gulimall.product.service.AttrService;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("attrService")
@@ -49,7 +49,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<AttrEntity> page = this.page(
                 new Query<AttrEntity>().getPage(params),
-                new QueryWrapper<AttrEntity>()
+                new QueryWrapper<>()
         );
 
         return new PageUtils(page);
@@ -81,9 +81,9 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         }
         String key = (String) params.get("key");
         if (!StringUtils.isEmpty(key)) {
-            queryWrapper.and((item) -> {
-                item.eq("attr_id", key).or().like("attr_name", key);
-            });
+            queryWrapper.and(item ->
+                    item.eq("attr_id", key).or().like("attr_name", key)
+            );
         }
 
         IPage<AttrEntity> page = this.page(
@@ -93,7 +93,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         PageUtils pageUtils = new PageUtils(page);
         List<AttrEntity> records = page.getRecords();
 
-        List<AttrResponseVo> responseVoList = records.stream().map((item) -> {
+        List<AttrResponseVo> responseVoList = records.stream().map(item -> {
             AttrResponseVo vo = new AttrResponseVo();
             BeanUtils.copyProperties(item, vo);
 
@@ -187,10 +187,11 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         List<AttrAttrgroupRelationEntity> entities = relationService.list(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_group_id",
                 attrgroupId));
 
-        List<Long> attrIds = entities.stream().map(item -> {
-            return item.getAttrId();
-        }).collect(Collectors.toList());
+        List<Long> attrIds = entities.stream().map(AttrAttrgroupRelationEntity::getAttrId).collect(Collectors.toList());
 
+        if (attrIds == null || attrIds.isEmpty()) {
+            return Collections.emptyList();
+        }
         Collection<AttrEntity> attrEntities = this.listByIds(attrIds);
         return (List<AttrEntity>) attrEntities;
     }
@@ -204,6 +205,46 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             return relationEntity;
         }).collect(Collectors.toList());
         relationService.deleteBatchRelation(entities);
+    }
+
+    /**
+     * 获取当前分组没有关联的所有属性
+     *
+     * @param attrgroupId
+     * @param params
+     * @return PageUtils
+     **/
+    @Override
+    public PageUtils getNoRelationAttr(Long attrgroupId, Map<String, Object> params) {
+        // 1.当前分组只能关联自己所属的分类里面的所有属性
+        AttrGroupEntity attrGroup = attrGroupService.getById(attrgroupId);
+        Long catelogId = attrGroup.getCatelogId();
+        // 2.当前分组只能关联别的分组没有引用的属性
+        // 2.1、当前分类下的其他分组
+        List<AttrGroupEntity> group = attrGroupService.list(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId));
+        List<Long> collect = group.stream().map(AttrGroupEntity::getAttrGroupId).collect(Collectors.toList());
+        // 2.2、这些分组关联的属性
+        List<AttrAttrgroupRelationEntity> groupId = relationService.list(new QueryWrapper<AttrAttrgroupRelationEntity>().in("attr_group_id",
+                collect));
+        List<Long> attrIds = groupId.stream().map(AttrAttrgroupRelationEntity::getAttrId).collect(Collectors.toList());
+        // 2.3、从当前分类的所有属性中移除这些属性
+        QueryWrapper<AttrEntity> wrapper = new QueryWrapper<AttrEntity>().eq("catelog_id", catelogId).eq("attr_type",
+                ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode());
+        if (attrIds != null && !attrIds.isEmpty()) {
+            wrapper.notIn("attr_id", attrIds);
+        }
+
+        String key = (String) params.get("key");
+        if (!StringUtils.isEmpty(key)) {
+            wrapper.and(w ->
+                    w.like("attr_id", key).or().like("attr_name", key)
+            );
+        }
+
+        IPage<AttrEntity> page = this.page(new Query<AttrEntity>().getPage(params), wrapper);
+
+
+        return new PageUtils(page);
     }
 
 }
